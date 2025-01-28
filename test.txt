@@ -39,4 +39,50 @@ COPY html /usr/share/nginx/html
 
 EXPOSE 80
 
+sonar.projectName=lab12
+sonar.projectKey=lab12
+sonar.projectVersion=1.0
+sonar.language=java
+sonar.source=src/main/java
+sonar.tests=src/test/java
 
+
+pipeline {
+    agent any
+    tools {
+        maven 'Maven3' // The name matches the one you have configured in Jenkins
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/jabedhasan21/java-hello-world-with-maven.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                bat 'mvn clean install'  // Running Maven commands using the installed Maven3 tool
+            }
+        }
+        stage('Test') {
+            steps {
+                bat 'mvn test'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deployment steps go here.'
+            }
+        }
+    }
+    post {
+        always {
+            echo 'Pipeline finished.'
+        }
+        success {
+            echo 'Build succeeded!'
+        }
+        failure {
+            echo 'Build failed!'
+        }
+    }
+}
